@@ -3,7 +3,9 @@ import argparse
 import numpy as np
 from matplotlib import pyplot as plt
 
-parser = argparse.ArgumentParser(description = 'Script that plots MOLPDF scores to evaluate convergence')
+# Read inputs from prompt
+
+parser = argparse.ArgumentParser(description = 'Script that plots MOLPDF scores to evaluate convergence. WARNING: all outputs will be rewritten!')
 parser.add_argument("-scorefile", help="score input file (i.e format pdbfile score")
 parser.add_argument("-outrms" , help="name of output score RMSD")
 parser.add_argument("-outsort", help="name of output sorted score")
@@ -12,14 +14,7 @@ parser.add_argument("-win", help="windows size for computing score RMSD (default
 parser.add_argument("-scorecol", help="column index in score file (default: 1)", default=1)
 args = parser.parse_args()
 
-scorefile = str(args.scorefile)
-rmsscorefile= str(args.outrms)
-sortcorefile= str(args.outsort)
-figscoreconv= str(args.ofig)
-win = args.win
-score_col = args.scorecol
-
-### need to add a check if the number of scored models in scorefile is at least more than win*5
+######### Functions ###############
 
 def col2list(datfile, col):
     '''Extract the column #col of datfile and write it as a list'''
@@ -40,6 +35,24 @@ def winrms(a, window_size):
     a2 = np.power(a,2)
     window = np.ones(window_size)/float(window_size)
     return np.sqrt(np.convolve(a2, window, 'valid'))
+
+########### Variables ###############
+
+# Input files/directories
+scorefile = str(args.scorefile)
+
+# Output files/directories
+rmsscorefile= str(args.outrms)
+sortcorefile= str(args.outsort)
+figscoreconv= str(args.ofig)
+
+# Global variables
+win = args.win
+score_col = args.scorecol
+
+############ Main script ############
+
+### need to add a check if the number of scored models in scorefile is at least more than win*5
 
 scorelist = col2list(scorefile,score_col)
 sortscorelist=-np.sort(-scorelist)

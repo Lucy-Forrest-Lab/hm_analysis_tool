@@ -15,30 +15,7 @@ parser.add_argument("-pattern", help="pattern in pdb file to search for score, (
 parser.add_argument("-col", help="column of MOLPDF score value in matched line of pdb (default=5)", default=5)
 args = parser.parse_args()
 
-# Assign prompted inputs to variables
-pdbdir = str(args.pdbdir)
-pattern = str(args.pattern)
-scorefile = str(args.scorefile)
-rootnm = str(args.rootnm)
-colscore = args.col
-
-# Find all *.pdb files in the pdbdir
-pdblist = glob.glob(pdbdir + '/' + rootnm +'*.pdb')
-
-#check if there are pdbs to analyze in the input folder
-if len(pdblist) == 0:
-    print('the are not pdb files in starting with ' + rootnm + ' in the ' + pdbdir + ' directory')
-
-#check if the output file exists
-try:
-    f = open(scorefile)
-    f.close()
-    print('the ' + str(scorefile) + ' already exists, exiting...')
-    sys.exit()
-except FileNotFoundError:
-    print('the ' + str(scorefile) + ' will be created')
-
-
+######### Functions ###############
 def lines_match(string, fp):
     '''make a list of matched lines in a file'''
     return [line for line in fp if string in line]
@@ -57,6 +34,37 @@ def getscore(listfiles, col):
                 print('input column of pdb file score line is not correct')
     col1col2 = pd.DataFrame(list(zip(column1,column2)), columns=['col1','col2'])
     return col1col2.sort_values(by=['col1'])
+
+########### Variables ###############
+
+# Input files/directories
+pdbdir = str(args.pdbdir)
+rootnm = str(args.rootnm)
+
+# Output files/directories
+scorefile = str(args.scorefile)
+
+# Global variables
+pattern = str(args.pattern)
+colscore = args.col
+
+############ Main script ############
+
+# Find all *.pdb files in the pdbdir
+pdblist = glob.glob(pdbdir + '/' + rootnm +'*.pdb')
+
+#check if there are pdbs to analyze in the input folder
+if len(pdblist) == 0:
+    print('the are not pdb files in starting with ' + rootnm + ' in the ' + pdbdir + ' directory')
+
+#check if the output file already exists
+try:
+    f = open(scorefile)
+    f.close()
+    print('the ' + str(scorefile) + ' already exists, exiting...')
+    sys.exit()
+except FileNotFoundError:
+    print('the ' + str(scorefile) + ' will be created')
 
 #print scores sorted by name with format
 np.savetxt(scorefile, getscore(pdblist,colscore).values, fmt='%s')
