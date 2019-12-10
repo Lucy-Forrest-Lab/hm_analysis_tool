@@ -1,18 +1,27 @@
 #!/usr/bin/env python
 import argparse
 import numpy as np
+import sys
 from matplotlib import pyplot as plt
 
-# Read inputs from prompt
-
-parser = argparse.ArgumentParser(description = 'Script that plots MOLPDF scores to evaluate convergence. WARNING: all outputs will be rewritten!')
-parser.add_argument("-scorefile", help="score input file (i.e format pdbfile score")
-parser.add_argument("-outrms" , help="name of output score RMSD")
-parser.add_argument("-outsort", help="name of output sorted score")
-parser.add_argument("-ofig", help="name of the output pdf figure")
-parser.add_argument("-win", help="windows size for computing score RMSD (default: 200)", default=200)
-parser.add_argument("-scorecol", help="column index in score file (default: 1)", default=1)
-args = parser.parse_args()
+def get_parser():
+    parser = argparse.ArgumentParser(description = 'Script that plots MOLPDF scores to evaluate convergence. WARNING: all outputs will be rewritten!')
+    parser.add_argument("-scorefile", help="score input file (i.e format pdbfile score")
+    parser.add_argument("-outrms" , help="name of output score RMSD")
+    parser.add_argument("-ofig", help="name of the output pdf figure")
+    parser.add_argument("-win", help="windows size for computing score RMSD (default: 200)", default=200)
+    parser.add_argument("-scorecol", help="column index in score file (default: 1)", default=1)
+    args = parser.parse_args()
+    ########### Variables ###############
+    # Input files/directories
+    ifile = str(args.scorefile)
+    # Output files/directories
+    ormsd= str(args.outrms)
+    ofig= str(args.ofig)
+    # Global variables
+    window = int(args.win)
+    idxcol = int(args.scorecol)
+    return [ifile,ormsd,ofig,window,idxcol]
 
 ######### Functions ###############
 
@@ -36,50 +45,41 @@ def winrms(a, window_size):
     window = np.ones(window_size)/float(window_size)
     return np.sqrt(np.convolve(a2, window, 'valid'))
 
-########### Variables ###############
+def main(scorefile,rmsscorefile,figscoreconv,win,score_col):
+    '''Main entry point'''
+    scorelist = col2list(scorefile,score_col)
+    sortscorelist=-np.sort(-scorelist)
+    scorerms = winrms(sortscorelist,win)
 
-# Input files/directories
-scorefile = str(args.scorefile)
+    ### check if the number of scored models in scorefile is at least more than win*5
+    nummdls=(len(scorelist))
+    if nummdls < win*5:
+        print('The total number of models, ' + str(nummdls) + ', is too little compared with the RMSD windows size,' + str(win) + '.')
+        print('Please, increase the number of models to analyze, or decrease the windows size.')
+        print('Exiting now...')
+        sys.exit()
+        
+    #plot results into file
+    fig = plt.figure(figsize=(6,10))
+    axis1 = fig.add_subplot(311)
+    axis1.plot(scorelist)
+    axis1.set_ylabel('MOLPDF score (a.u)')
+    axis1.set_xlabel('# of models')
+    axis2 = fig.add_subplot(312)
+    axis2.plot(sortscorelist)
+    axis2.set_ylabel('MOLPDF score (a.u.)')
+    axis2.set_xlabel('# of models')
+    axis3 = fig.add_subplot(313)
+    axis3.plot(scorerms)
+    axis3.set_ylabel('RMSD of MOLPDF score (a.u)')
+    axis3.set_xlabel('# of windows of (' + str(win) + ' models/window)')
+    fig.savefig(figscoreconv)
 
-# Output files/directories
-rmsscorefile= str(args.outrms)
-sortcorefile= str(args.outsort)
-figscoreconv= str(args.ofig)
+    #transpose to make it readable and print with format
+    transp_rms = scorerms.T
+    with open(rmsscorefile, 'w+') as datafile_id:
+        np.savetxt(datafile_id, transp_rms, fmt=['%1.4f'])
 
-# Global variables
-win = args.win
-score_col = args.scorecol
-
-############ Main script ############
-
-### need to add a check if the number of scored models in scorefile is at least more than win*5
-
-scorelist = col2list(scorefile,score_col)
-sortscorelist=-np.sort(-scorelist)
-scorerms = winrms(sortscorelist,win)
-
-#plot results into file
-fig = plt.figure(figsize=(6,10))
-axis1 = fig.add_subplot(311)
-axis1.plot(scorelist)
-axis1.set_ylabel('MOLPDF score (a.u)')
-axis1.set_xlabel('# of models')
-axis2 = fig.add_subplot(312)
-axis2.plot(sortscorelist)
-axis2.set_ylabel('MOLPDF score (a.u.)')
-axis2.set_xlabel('# of models')
-axis3 = fig.add_subplot(313)
-axis3.plot(scorerms)
-axis3.set_ylabel('RMSD of MOLPDF score (a.u)')
-axis3.set_xlabel('# of windows of (' + str(win) + ' models/window)')
-fig.savefig(figscoreconv)
-
-#transpose to make it readable and print with format
-transp_rms = scorerms.T
-with open(rmsscorefile, 'w+') as datafile_id:
-    np.savetxt(datafile_id, transp_rms, fmt=['%1.4f'])
-
-transp_sscore = sortscorelist.T
-with open(sortcorefile, 'w+') as datafile_id:
-    np.savetxt(datafile_id, transp_sscore, fmt=['%1.4f'])
-
+if __name__ == '__main__':
+    inputvars=get_parser()
+    main(*inputvars)
