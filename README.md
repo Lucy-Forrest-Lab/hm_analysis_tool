@@ -8,12 +8,13 @@ A set of python scripts to analyze homology models computed with MODELLER
 
 ## Installation ##
 Clone the repo and install it.\
-`git clone https://github.com/vanessa-leone/hm_analysis_tool.git`
+`git clone https://github.com/vanessa-leone/hm_analysis_tool.git`\
 `pip install -e .`
 
 ## Future features ##
 **- Select best MOLPDF structures based on user criterion**\
 **- Analyze this subgroup of structures further**:\
-    -ProQ/ProQM scores\
-    -Molprobilty quality check\
-    -PROCHECK quality check
+	-ProQ/ProQM scores\
+	-Molprobilty quality check\
+	-PROCHECK quality check\
+
