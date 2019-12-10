@@ -12,9 +12,9 @@ Clone the repo and install it.\
 `pip install -e .`
 
 ## Future features ##
-**- Select best MOLPDF structures based on user criterion**\
-**- Analyze this subgroup of structures further**:\
-	-ProQ/ProQM scores\
-	-Molprobilty quality check\
-	-PROCHECK quality check\
+** * Select best MOLPDF structures based on user criterion**\
+** *  Analyze this subgroup of structures further**:\
+	- ProQ/ProQM scores\
+	- Molprobilty quality check\
+	- PROCHECK quality check
 
