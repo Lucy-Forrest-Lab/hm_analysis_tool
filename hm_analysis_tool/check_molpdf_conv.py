@@ -4,24 +4,14 @@ import numpy as np
 import sys
 from matplotlib import pyplot as plt
 
-def get_parser():
+def get_parser(args):
     parser = argparse.ArgumentParser(description = 'Script that plots MOLPDF scores to evaluate convergence. WARNING: all outputs will be rewritten!')
     parser.add_argument("-scorefile", help="score input file (i.e format pdbfile score")
     parser.add_argument("-outrms" , help="name of output score RMSD")
     parser.add_argument("-ofig", help="name of the output pdf figure")
     parser.add_argument("-win", help="windows size for computing score RMSD (default: 200)", default=200)
     parser.add_argument("-scorecol", help="column index in score file (default: 1)", default=1)
-    args = parser.parse_args()
-    ########### Variables ###############
-    # Input files/directories
-    ifile = str(args.scorefile)
-    # Output files/directories
-    ormsd= str(args.outrms)
-    ofig= str(args.ofig)
-    # Global variables
-    window = int(args.win)
-    idxcol = int(args.scorecol)
-    return [ifile,ormsd,ofig,window,idxcol]
+    return parser.parse_args()
 
 ######### Functions ###############
 
@@ -45,8 +35,19 @@ def winrms(a, window_size):
     window = np.ones(window_size)/float(window_size)
     return np.sqrt(np.convolve(a2, window, 'valid'))
 
-def main(scorefile,rmsscorefile,figscoreconv,win,score_col):
+def main(args):
     '''Main entry point'''
+    ########### Variables ###############
+    # Input files/directories
+    scorefile = str(args.scorefile)
+    # Output files/directories
+    rmsscorefile= str(args.outrms)
+    figscoreconv= str(args.ofig)
+    # Global variables
+    win = int(args.win)
+    score_col = int(args.scorecol)
+    ####################################
+
     scorelist = col2list(scorefile,score_col)
     sortscorelist=-np.sort(-scorelist)
     scorerms = winrms(sortscorelist,win)
@@ -81,5 +82,5 @@ def main(scorefile,rmsscorefile,figscoreconv,win,score_col):
         np.savetxt(datafile_id, transp_rms, fmt=['%1.4f'])
 
 if __name__ == '__main__':
-    inputvars=get_parser()
-    main(*inputvars)
+    args = get_parser(sys.argv[1:])
+    main(args)
