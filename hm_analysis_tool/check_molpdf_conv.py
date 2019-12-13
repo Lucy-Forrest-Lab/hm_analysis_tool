@@ -9,9 +9,9 @@ def get_parser(args):
     parser.add_argument("-scorefile", help="score input file (i.e format pdbfile score")
     parser.add_argument("-outrms" , help="name of output score RMSD")
     parser.add_argument("-ofig", help="name of the output pdf figure")
-    parser.add_argument("-win", help="windows size for computing score RMSD (default: 200)", default=200)
-    parser.add_argument("-scorecol", help="column index in score file (default: 1)", default=1)
-    return parser.parse_args()
+    parser.add_argument("-win", help="windows size for computing score RMSD (default: 200)", default='200')
+    parser.add_argument("-scorecol", help="column index in score file (default: 1)", default='1')
+    return parser.parse_args(args)
 
 ######### Functions ###############
 
@@ -35,6 +35,31 @@ def winrms(a, window_size):
     window = np.ones(window_size)/float(window_size)
     return np.sqrt(np.convolve(a2, window, 'valid'))
 
+def check_numdls(ilist,win):
+    '''check if the number of scored models in scorefile is at least more than win*5'''
+    nummdls=(len(ilist))
+    if nummdls < win*5:
+        print('The total number of models, ' + str(nummdls) + ', is too little compared with the RMSD windows size,' + str(win) + '.')
+        print('Please, increase the number of models to analyze, or decrease the windows size.')
+        print('Exiting now...')
+        sys.exit()    
+
+def plot_opt(ilist,slist,scorerms,ofig,win):
+    fig = plt.figure(figsize=(6,10))
+    axis1 = fig.add_subplot(311)
+    axis1.plot(ilist)
+    axis1.set_ylabel('MOLPDF score (a.u)')
+    axis1.set_xlabel('# of models')
+    axis2 = fig.add_subplot(312)
+    axis2.plot(slist)
+    axis2.set_ylabel('MOLPDF score (a.u.)')
+    axis2.set_xlabel('# of models')
+    axis3 = fig.add_subplot(313)
+    axis3.plot(scorerms)
+    axis3.set_ylabel('RMSD of MOLPDF score (a.u)')
+    axis3.set_xlabel('# of windows of (' + str(win) + ' models/window)')
+    fig.savefig(ofig)
+
 def main(args):
     '''Main entry point'''
     ########### Variables ###############
@@ -53,28 +78,10 @@ def main(args):
     scorerms = winrms(sortscorelist,win)
 
     ### check if the number of scored models in scorefile is at least more than win*5
-    nummdls=(len(scorelist))
-    if nummdls < win*5:
-        print('The total number of models, ' + str(nummdls) + ', is too little compared with the RMSD windows size,' + str(win) + '.')
-        print('Please, increase the number of models to analyze, or decrease the windows size.')
-        print('Exiting now...')
-        sys.exit()
+    check_numdls(scorelist,win)
         
     #plot results into file
-    fig = plt.figure(figsize=(6,10))
-    axis1 = fig.add_subplot(311)
-    axis1.plot(scorelist)
-    axis1.set_ylabel('MOLPDF score (a.u)')
-    axis1.set_xlabel('# of models')
-    axis2 = fig.add_subplot(312)
-    axis2.plot(sortscorelist)
-    axis2.set_ylabel('MOLPDF score (a.u.)')
-    axis2.set_xlabel('# of models')
-    axis3 = fig.add_subplot(313)
-    axis3.plot(scorerms)
-    axis3.set_ylabel('RMSD of MOLPDF score (a.u)')
-    axis3.set_xlabel('# of windows of (' + str(win) + ' models/window)')
-    fig.savefig(figscoreconv)
+    plot_opt(scorelist,sortscorelist,scorerms,figscoreconv,win)
 
     #transpose to make it readable and print with format
     transp_rms = scorerms.T

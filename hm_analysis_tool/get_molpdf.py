@@ -36,6 +36,24 @@ def getscore(listfiles,pattern,col):
     col1col2 = pd.DataFrame(list(zip(column1,column2)), columns=['col1','col2'])
     return col1col2.sort_values(by=['col1'])
 
+def check_file_existance(ofile):
+    '''check if the file file already exists'''
+    try:
+        f = open(ofile)
+        f.close()
+        print('the ' + str(ofile) + ' already exists, exiting...')
+        sys.exit()
+    except FileNotFoundError:
+        print('the ' + str(ofile) + ' will be created')    
+
+def get_listoffiles(directory,name):
+    '''Get list of files and check if there are files in that directory'''
+    listdir = glob.glob(directory + '/' + str(name) +'*.pdb')
+    if len(listdir) == 0:
+        print('Cannot find files in starting with ' + str(name) + ' in the ' + str(directory) + ' directory')
+        sys.exit()
+    return listdir
+
 def main(args):
     '''Main entry point'''
     ########### Variables ###############
@@ -48,21 +66,11 @@ def main(args):
     colscore = int(args.col)
     #####################################
 
-    # Find all *.pdb files in the pdbdir
-    pdblist = glob.glob(pdbdir + '/' + rootnm +'*.pdb')
-
-    #check if there are pdbs to analyze in the input folder
-    if len(pdblist) == 0:
-        print('the are not pdb files in starting with ' + rootnm + ' in the ' + pdbdir + ' directory')
-
     #check if the output file already exists
-    try:
-        f = open(scorefile)
-        f.close()
-        print('the ' + str(scorefile) + ' already exists, exiting...')
-        sys.exit()
-    except FileNotFoundError:
-        print('the ' + str(scorefile) + ' will be created')
+    check_file_existance(scorefile) 
+
+    # Find all *.pdb files in the pdbdir
+    pdblist = get_listoffiles(pdbdir,rootnm)
 
     #print scores sorted by name with format
     np.savetxt(scorefile, getscore(pdblist,scorepatt,colscore).values, fmt='%s')
