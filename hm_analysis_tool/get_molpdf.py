@@ -54,8 +54,9 @@ def get_listoffiles(directory,name):
         sys.exit()
     return listdir
 
-def main(args):
+def main():
     '''Main entry point'''
+    args = get_parser(sys.argv[1:])
     ########### Variables ###############
     pdbdir = str(args.pdbdir)
     rootnm = str(args.rootnm)
@@ -76,5 +77,4 @@ def main(args):
     np.savetxt(scorefile, getscore(pdblist,scorepatt,colscore).values, fmt='%s')
 
 if __name__ == '__main__':
-    args = get_parser(sys.argv[1:])
-    main(args)
+    main()

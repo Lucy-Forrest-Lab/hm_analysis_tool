@@ -65,8 +65,8 @@ def print_log_perc(odir,perc,score,tot):
     flog.close()
 
 def main():
-    args = get_parser(sys.argv[1:])
     '''Main entry point'''
+    args = get_parser(sys.argv[1:])
     ########### Variables ###############
     scorefile = str(args.scorefile)
     # Output files/directories

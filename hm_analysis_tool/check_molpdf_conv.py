@@ -60,8 +60,9 @@ def plot_opt(ilist,slist,scorerms,ofig,win):
     axis3.set_xlabel('# of windows of (' + str(win) + ' models/window)')
     fig.savefig(ofig)
 
-def main(args):
+def main():
     '''Main entry point'''
+    args = get_parser(sys.argv[1:])
     ########### Variables ###############
     # Input files/directories
     scorefile = str(args.scorefile)
@@ -89,5 +90,4 @@ def main(args):
         np.savetxt(datafile_id, transp_rms, fmt=['%1.4f'])
 
 if __name__ == '__main__':
-    args = get_parser(sys.argv[1:])
-    main(args)
+    main()
