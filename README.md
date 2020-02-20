@@ -23,7 +23,7 @@ Clone the repo and install it.\
 **Copy all the structures with a threshold less than 2400 MOLPDF score:**\
 `extract_str -scorefile mdls_molpdf.out -threshold 2400 -outdir analysis`
 
-**Compute the PROQM score for the template and the copied models:**\
+**Compute the PROQM score for the template and the copied models\.** The command has to be run in the folder where the model PDB files are located.\
 `compute_proqm -tmpldir model2/ -alignment model2/glyt1_on_4xp4_noloop.pir`
 
 ## Future features ##
