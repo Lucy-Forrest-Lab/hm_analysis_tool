@@ -14,11 +14,11 @@ Clone the repo and install it.\
 `pip install -e .`
 
 ## Example ##
-*  **Extract MOLPDF score of the models\.** The following command will search for the MOLPDF score printed in each PDB in the directory `model2/` and starting with the rootname `glyt1.B` and it will write the result to the `mdls_molpdf.out` file in the working directory.
+*  **Extract MOLPDF score of the models\.** Search for the MOLPDF score printed in each PDB in the directory `model2/` and starting with the rootname `glyt1.B` and it will write the result to the `mdls_molpdf.out` file in the working directory.
 
    `get_molpdf -pdbdir model2/ -rootname glyt1.B -o mdls_molpdf.out`
 
-*  **Plot convergence plot of MOLPDF score\.** The following command will read the list of MOLPDF scores in the `mdls_molpdf.out` file and it will plot the list of MOLPDF score, the ordered MOLPDF score and the RMS value of MOLPDF score (with the default 200 models window)\. The three plots will be printed in `mdls_convergence.pdf` file and the window RMS of the MOLPDF score will be printed in the `mdls_conv.out` file.
+*  **Plot convergence plot of MOLPDF score\.** Read the list of MOLPDF scores in the `mdls_molpdf.out` file and it will plot the list of MOLPDF score, the ordered MOLPDF score and the RMS value of MOLPDF score (with the default 200 models window)\. The three plots will be printed in `mdls_convergence.pdf` file and the window RMS of the MOLPDF score will be printed in the `mdls_conv.out` file.
 
    `check_molpdf_conv -scorefile mdls_molpdf.out -outrms mdls_conv.out -ofig mdls_convergence.pdf`
 
@@ -26,7 +26,7 @@ Clone the repo and install it.\
 
    `extract_str -scorefile mdls_molpdf.out -threshold 2400 -outdir analysis`
 
-*  **Compute the PROQM score for the template and the selected models\.** The name of the template PDB file (located in `model2` folder) will be inferred from the `model2/glyt1_on_4xp4_noloop.pir` alignemnt file\. The command has to be run in the folder where the model PDB files are located.
+*  **Compute the PROQM score for the template and the selected models\.** The name of the template PDB file (located in `model2` folder) will be inferred from the `model2/glyt1_on_4xp4_noloop.pir` alignment file\. The command has to be run in the folder where the model PDB files are located.
 
    `compute_proqm -tmpldir model2/ -alignment model2/glyt1_on_4xp4_noloop.pir`
 
