@@ -10,7 +10,7 @@ A set of python scripts to analyze homology models computed with MODELLER
 
 ## Installation ##
 Clone the repo and install it.\
-`git clone https://github.com/vanessa-leone/hm_analysis_tool.git`\
+`git clone https://github.com/Lucy-Forrest-Lab/hm_analysis_tool.git`\
 `pip install -e .`
 
 ## Example ##
