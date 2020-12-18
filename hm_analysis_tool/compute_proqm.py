@@ -15,7 +15,7 @@ def get_parser(args):
     parser.add_argument("-full_seq_mdl", help="full-length sequence of the model in fasta format (file has to be in the working directory)", dest="fasta_mdl" )
     parser.add_argument("-full_seq_template", help="full-length sequence of the model in fasta format (file has to be in the working directory)", dest="fasta_template")
     parser.add_argument("-rosetta_score_app", help="Rosetta score application (default: /data/TMB-CSB/apps/CentOS7-LabLinux/rosetta/3.9/main/source/bin/score.static.linuxgccrelease)", default="/data/TMB-CSB/apps/CentOS7-LabLinux/rosetta/3.9/main/source/bin/score.static.linuxgccrelease")
-    parser.add_argument("-proqm_script", help="ProQ master script bin folder (default: /home/leonealvarezva/software/ProQ_scripts/bin/)", default="/home/leonealvarezva/software/ProQ_scripts/bin/")
+    parser.add_argument("-proqm_script", help="ProQ master script bin folder (default: /data/TMB-CSB/apps/CentOS7-LabLinux/ProQ_scripts/vl/bin)", default="/data/TMB-CSB/apps/CentOS7-LabLinux/ProQ_scripts/vl/bin")
     parser.add_argument("-rosetta_db", help="Rosetta database folder (default: /data/TMB-CSB/apps/CentOS7-LabLinux/rosetta/3.9/main/database/)", default="/data/TMB-CSB/apps/CentOS7-LabLinux/rosetta/3.9/main/database/")
     return parser.parse_args(args)
     #modeller inst? write pir to fasta?
@@ -144,7 +144,7 @@ def main():
     [print_clean_pdb(mod_i) for mod_i in mdls_pdblist]
     [compute_proqm(rosetta_score_app,rosetta_db,one_mdl,str(mod_i) + 'cl',nmdl) for mod_i in mdls_pdblist]
 
-   
+
 #compare the profiles with the alignment
 
 
